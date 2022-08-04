@@ -5,20 +5,11 @@ class ReceitasController {
     static async registraReceita(req, res) {
         const {descricao, valor, data} = req.body
 
-        const dataModificar = data
-        console.log(dataModificar)
-        console.log(typeof(dataModificar))
 
-
-        if(!descricao) {
-            return res.status(400).json({msg: 'A descrição é obrigatória'})
-        }
-
-        const busca = await database.Receitas.findOne({descricao:descricao})
-
-        // if(busca) {
-        //     return res.status(400).json({msg: 'Descrição já cadastrada'})
-        // }
+        const regExp1 = /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$/
+        const foundEnviado = regExp1.exec(data)
+        const mesEnviado = foundEnviado[1]
+        console.log(mesEnviado)
 
         if(!valor) {
             return res.status(400).json({msg: 'O valor é obrigatória'})
@@ -28,27 +19,57 @@ class ReceitasController {
             return res.status(400).json({msg: 'A data é obrigatória'})
         }
 
-        const receita = {
-            descricao, 
-            valor, 
-            data
+        if(!descricao) {
+            return res.status(400).json({msg: 'A descrição é obrigatória'})
         }
 
-        try {
-            const receitaCriada = await database.Receitas.create(receita)
+        const busca = await database.Receitas.findOne({
+            where: {
+                descricao: descricao
+            }
+        })
 
-            res.status(201).json(`Receita cadastrada!`)
+
+        if (!busca) {
+            const receitaCriada = await database.Receitas.create({descricao, valor, data})
+            return res.status(201).json(`Receita cadastrada!`)
+
+        }
+
+
+        const dataBuscada = busca.data
+        const found = regExp1.exec(dataBuscada)
+        const mesBuscado = found[1]
+
+        console.log(mesBuscado)
+
+        if(descricao === busca.descricao && mesEnviado === mesBuscado) {
+            return res.status(400).json({msg: 'Essa receita desse mês já foi cadastrada'})
+        
+        } else {
+            const receitaCriada = await database.Receitas.create({descricao, valor, data})
+            return res.status(201).json(`Receita cadastrada!`)
+        }
+
+    }
+
+
+
+    static async listaTodasAsReceitas (req, res) {
+
+        try {
+            const todasAsReceitas = await database.Receitas.findAll()
+            return res.status(200).json(todasAsReceitas)
 
         } catch (erro) {
-
-            res.status(400).json()
+            return res.status(400).json({erro: erro.message})
 
         }
     }
 
 
     static async pegaUmaReceita (req, res) {
-        const {id} = req.body
+        const {id} = req.params
 
         try {
 
@@ -70,6 +91,49 @@ class ReceitasController {
 
 
 
+    static async atualizaReceita(req, res) {
+        const {id} = req.params
+        const {descricao, valor, data} = req.body
+
+ 
+        try {
+
+            const receitaConsultada = await database.Receitas.findByPk(id)
+
+            receitaConsultada.descricao = descricao
+            receitaConsultada.valor = valor
+            receitaConsultada.data = data
+
+            const receitaAlterada = await receitaConsultada.save()
+
+            return res.status(200).json(receitaAlterada)
+
+
+        } catch (erro) {
+            return res.status(400).json({erro: erro.message})
+
+        }
+    }
+
+
+
+    static async deletaReceita(req, res) {
+        const {id} = req.params
+
+        try {
+            database.Receitas.destroy({
+                where: {
+                    id:id
+                }
+            })
+
+            return res.status(200).json({msg: `O ${id} foi deletado com sucesso`})
+
+        } catch (erro) {
+            return res.status(400).json({erro: erro.message})
+        }
+
+    }
 
 
 
