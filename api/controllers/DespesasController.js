@@ -1,6 +1,5 @@
 const Services = require('../services/Services')
 const database = require('../models')
-const { json } = require('body-parser')
 
 
 
@@ -12,39 +11,51 @@ class DespesasController {
     static async criaDespesa (req, res) {
         const {descricao, valor, data} = req.body
 
+
+        const mesEnviado = data.slice(5,7)
+
         const despesa = {
-            descricao, valor, data
+            descricao: descricao,
+            valor: valor,
+            data: data, 
+            mes: mesEnviado
         }
 
+        
+        console.log(mesEnviado)
+        console.log(typeof(mesEnviado))
+
         try {
-            await despesasServices.verificaCampo(descricao)
-            await despesasServices.verificaCampo(valor)
-            await despesasServices.verificaCampo(data)
 
-            const busca = await despesasServices.buscaUmRegistroDescricao(descricao)
-
-            if(!busca) {
-                await despesasServices.registraUmItem(despesa)
-                return res.status(201).json('Despesas registrada!')
+            if (!descricao) {
+                throw ('A descrição é obrigatória')
             }
 
-            const busca2 = await database.Despesas.findAll({
+            if (!valor) {
+                throw ('O valor não pode ficar em branco')
+            }
+
+            if(!data) {
+                throw ('A data não pode ficar em branco')
+            }
+
+            const busca = await database.Despesas.findOne({
                 where: {
                     descricao: descricao,
-                    data: data
+                    mes: mesEnviado 
                 }
             })
 
+            console.log(busca)
+            console.log(typeof(busca))
 
-            if(busca2.length === 0) {
-                await despesasServices.registraUmItem(despesa)
-                return res.status(201).json('Despesas registrada!')
+            if (!busca) {
+                await database.Despesas.create(despesa)
+                return res.status(201).json('Despesa cadastrada com sucesso.')
 
             } else {
-                return res.status(400).json('Despesa já registrada, tente outra.')
+                throw ('Despesa já registrada')
             }
-
-
 
         } catch (erro) {
             return res.status(400).json(erro)
