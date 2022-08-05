@@ -60,19 +60,7 @@ class DespesasController {
 
     }
 
-    static async apagaDespesa(req, res) {
-        const {id} = req.params
-        try {
-            await database.Despesas.destroy({
-                where: {
-                    id:id
-                }
-            })
-            return res.status(200).json('Despesas apagada!')
-        } catch (erro) {
-            return res.status(400).json(erro)
-        }
-    }
+
 
     static async listaTodasAsDespesas(req, res) {
         try {
@@ -118,6 +106,24 @@ class DespesasController {
         } catch (erro) {
             return res.status(400).json(erro)
         }
+    }
+
+    static async deletaDespesa(req, res) {
+        const {id} = req.params
+
+        try {
+            database.Despesas.destroy({
+                where: {
+                    id:id
+                }
+            })
+
+            return res.status(200).json({msg: `O ${id} foi deletado com sucesso`})
+
+        } catch (erro) {
+            return res.status(400).json({erro: erro.message})
+        }
+
     }
 }
 
