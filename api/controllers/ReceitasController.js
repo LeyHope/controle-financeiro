@@ -32,7 +32,7 @@ class ReceitasController {
 
         if (!busca) {
             const receitaCriada = await database.Receitas.create({descricao, valor, data})
-            return res.status(201).json(`Receita cadastrada!`)
+            return res.status(201).json(`Receita registrada!`)
 
         }
 
@@ -134,15 +134,6 @@ class ReceitasController {
         }
 
     }
-
-
-
-
-
-
-
-
-
 
 
 }
