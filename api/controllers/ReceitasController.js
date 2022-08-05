@@ -90,6 +90,8 @@ class ReceitasController {
         const {id} = req.params
         const {descricao, valor, data} = req.body
 
+        const mesEnviado = data.slice(5,7)
+
  
         try {
 
@@ -98,6 +100,7 @@ class ReceitasController {
             receitaConsultada.descricao = descricao
             receitaConsultada.valor = valor
             receitaConsultada.data = data
+            receitaConsultada.mes = mesEnviado
 
             const receitaAlterada = await receitaConsultada.save()
 
