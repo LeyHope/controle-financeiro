@@ -5,11 +5,17 @@ class ReceitasController {
     static async registraReceita(req, res) {
         const {descricao, valor, data} = req.body
 
+        const mesEnviado = data.slice(5,7)
 
-        const regExp1 = /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$/
-        const foundEnviado = regExp1.exec(data)
-        const mesEnviado = foundEnviado[1]
-        console.log(mesEnviado)
+
+        const receita = {
+            descricao: descricao,
+            valor: valor,
+            data: data,
+            mes: mesEnviado
+
+        }
+
 
         if(!valor) {
             return res.status(400).json({msg: 'O valor é obrigatória'})
@@ -25,31 +31,20 @@ class ReceitasController {
 
         const busca = await database.Receitas.findOne({
             where: {
-                descricao: descricao
+                descricao: descricao,
+                mes: mesEnviado
             }
         })
 
 
         if (!busca) {
-            const receitaCriada = await database.Receitas.create({descricao, valor, data})
+            await database.Receitas.create(receita)
             return res.status(201).json(`Receita registrada!`)
 
-        }
-
-
-        const dataBuscada = busca.data
-        const found = regExp1.exec(dataBuscada)
-        const mesBuscado = found[1]
-
-        console.log(mesBuscado)
-
-        if(descricao === busca.descricao && mesEnviado === mesBuscado) {
-            return res.status(400).json({msg: 'Essa receita desse mês já foi cadastrada'})
-        
         } else {
-            const receitaCriada = await database.Receitas.create({descricao, valor, data})
-            return res.status(201).json(`Receita cadastrada!`)
+            return res.status(400).json(`Receita já cadastrada!`)
         }
+
 
     }
 

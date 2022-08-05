@@ -21,9 +21,6 @@ class DespesasController {
             mes: mesEnviado
         }
 
-        
-        console.log(mesEnviado)
-        console.log(typeof(mesEnviado))
 
         try {
 
@@ -46,8 +43,6 @@ class DespesasController {
                 }
             })
 
-            console.log(busca)
-            console.log(typeof(busca))
 
             if (!busca) {
                 await database.Despesas.create(despesa)
