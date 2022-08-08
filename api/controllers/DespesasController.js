@@ -10,7 +10,7 @@ const despesasServices = new Services('Despesas')
 class DespesasController {
 
     static async criaDespesa (req, res) {
-        const {descricao, valor, data} = req.body
+        const {descricao, valor, data, categoria} = req.body
 
 
         const mesEnviado = data.slice(5,7)
@@ -19,7 +19,8 @@ class DespesasController {
             descricao: descricao,
             valor: valor,
             data: data, 
-            mes: mesEnviado
+            mes: mesEnviado,
+            categoria: categoria
         }
 
 
