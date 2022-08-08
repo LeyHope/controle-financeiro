@@ -1,5 +1,6 @@
 const Services = require('../services/Services')
 const database = require('../models')
+const { Op } = require('sequelize')
 
 
 
@@ -112,13 +113,41 @@ class DespesasController {
         const {id} = req.params
 
         try {
-            database.Despesas.destroy({
+            await database.Despesas.destroy({
                 where: {
                     id:id
                 }
             })
 
             return res.status(200).json({msg: `O ${id} foi deletado com sucesso`})
+
+        } catch (erro) {
+            return res.status(400).json({erro: erro.message})
+        }
+
+    }
+
+    static async teste(req,res) {
+        const {descricao, mes} = req.body
+
+
+
+        try {
+
+            const busca = await database.Despesas.findAll({
+                attributes: ['descricao', 'data'],
+                where: {
+                    descricao: {
+                        [Op.like]: descricao
+                    },
+                    data: {
+                        [Op.like]: `%-${mes}-%`
+                    }
+                }
+            })
+
+            return res.status(200).json(busca)
+
 
         } catch (erro) {
             return res.status(400).json({erro: erro.message})
