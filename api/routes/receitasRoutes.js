@@ -11,7 +11,7 @@ router.post('/receitas', ReceitasController.registraReceita)
 router.get('/receitas', ReceitasController.listaTodasAsReceitas)
 router.get('/receitas/:id', ReceitasController.pegaUmaReceita)
 
-
+router.get('/receitas/:ano/:mes', ReceitasController.listaReceitasPorMes)
 
 
 router.put('/receitas/:id', ReceitasController.atualizaReceita)

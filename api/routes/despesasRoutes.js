@@ -10,6 +10,9 @@ router.get('/despesas', DespesasController.listaTodasAsDespesas)
 router.get('/despesas/:id', DespesasController.pegaUmaDespesa)
 
 
+router.get('/despesas/:ano/:mes', DespesasController.listaDespesasPorMes)
+
+
 
 
 router.get('/despesasnome', DespesasController.teste)

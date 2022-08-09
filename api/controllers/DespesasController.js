@@ -157,8 +157,6 @@ class DespesasController {
     static async teste(req,res) {
         const {descricao, mes} = req.body
 
-
-
         try {
 
             const busca = await database.Despesas.findAll({
@@ -181,6 +179,38 @@ class DespesasController {
         }
 
     }
+
+
+
+
+
+
+    static async listaDespesasPorMes(req, res) {
+        const {ano, mes} = req.params
+        try {
+            const consulta = await database.Despesas.findAll({
+                where: {
+                    data: {
+                        [Op.like]: `${ano}-${mes}-%`
+                    }
+                }
+            })
+            return res.status(200).json(consulta)
+
+        } catch (erro) {
+            return res.status(400).json({erro: erro.message})
+        }
+
+        
+
+    }
+
+
+
+
+
+
+
 }
 
 module.exports = DespesasController

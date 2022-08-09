@@ -161,13 +161,28 @@ class ReceitasController {
 
     }
 
-    // static async listarTeste(req, res) {
-    //     const descricao = req.query.descricao
 
-    //     console.log(descricao)
+    static async listaReceitasPorMes(req, res) {
 
-    //     return res.status(200).json()
-    // }
+        const {ano, mes} = req.params
+
+        try {
+            const consulta = await database.Receitas.findAll({
+                where: {
+                    data: {
+                        [Op.like]: `${ano}-${mes}-%`
+                    }
+                }
+            })
+            return res.status(200).json(consulta)
+
+        } catch (erro) {
+            return res.status(400).json({erro: erro.message})
+        }
+
+        
+
+    }
 
 
 }
