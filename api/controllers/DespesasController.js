@@ -65,13 +65,39 @@ class DespesasController {
 
 
     static async listaTodasAsDespesas(req, res) {
-        try {
-            const busca = await database.Despesas.findAll()
-            return res.status(200).json(busca)
-        } catch (erro) {
-            return res.status(400).json(erro)
+        const descricao = req.query.descricao
+
+        if(!descricao){
+            try {
+                const busca = await database.Despesas.findAll()
+                return res.status(200).json(busca)
+            } catch (erro) {
+                return res.status(400).json(erro)
+            }
+
         }
+
+        if(descricao){
+            try {
+                const busca = await database.Despesas.findAll({
+                    where: {
+                        descricao: {
+                            [Op.like]: descricao
+                        }
+                    }
+                })
+                return res.status(200).json(busca)
+            } catch (erro) {
+                return res.status(400).json(erro)
+            }
+
+        }
+
+
     }
+
+
+
 
     static async pegaUmaDespesa(req, res) {
         const {id} = req.params

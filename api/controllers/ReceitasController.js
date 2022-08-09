@@ -1,4 +1,5 @@
 const database = require('../models/index')
+const { Op } = require('sequelize')
 
 class ReceitasController {
 
@@ -52,14 +53,41 @@ class ReceitasController {
 
     static async listaTodasAsReceitas (req, res) {
 
-        try {
-            const todasAsReceitas = await database.Receitas.findAll()
-            return res.status(200).json(todasAsReceitas)
+        const descricao = req.query.descricao
 
-        } catch (erro) {
-            return res.status(400).json({erro: erro.message})
+        console.log(descricao)
+
+        if(!descricao) {
+            try {
+                const todasAsReceitas = await database.Receitas.findAll()
+                return res.status(200).json(todasAsReceitas)
+    
+            } catch (erro) {
+                return res.status(400).json({erro: erro.message})
+    
+            }
+
+        } else {
+
+            try {
+                const busca = await database.Receitas.findAll({
+                    where: {
+                        descricao: {
+                            [Op.like]: descricao
+                        }
+                    }
+                })
+                return res.status(200).json(busca)
+
+            } catch (erro) {
+                return res.status(400).json({erro: erro.message})
+            }
 
         }
+
+
+
+
     }
 
 
@@ -132,6 +160,14 @@ class ReceitasController {
         }
 
     }
+
+    // static async listarTeste(req, res) {
+    //     const descricao = req.query.descricao
+
+    //     console.log(descricao)
+
+    //     return res.status(200).json()
+    // }
 
 
 }

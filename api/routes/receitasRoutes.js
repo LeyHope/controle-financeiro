@@ -11,6 +11,9 @@ router.post('/receitas', ReceitasController.registraReceita)
 router.get('/receitas', ReceitasController.listaTodasAsReceitas)
 router.get('/receitas/:id', ReceitasController.pegaUmaReceita)
 
+
+
+
 router.put('/receitas/:id', ReceitasController.atualizaReceita)
 
 router.delete('/receitas/:id', ReceitasController.deletaReceita)
